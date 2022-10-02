@@ -15,9 +15,9 @@ defmodule Estimations.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Estimations.PubSub},
       # Start the Endpoint (http/https)
-      EstimationsWeb.Endpoint
-      # Start a worker by calling: Estimations.Worker.start_link(arg)
-      # {Estimations.Worker, arg}
+      EstimationsWeb.Endpoint,
+      {Registry, keys: :unique, name: Estimations.RoomRegistry},
+      {DynamicSupervisor, strategy: :one_for_one, name: Estimations.RoomSupervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
