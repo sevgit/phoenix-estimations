@@ -1,3 +1,32 @@
-<h1>Inner room</h1>
+<h1 class="text-4xl font-bold">Room: <%= @name %> </h1>
 
-Room name: <%= @name %> 
+<%= if @state.name == nil do %>
+  
+  <.form let={f} for={:username} phx-submit="save">
+    <%= label f, :username %>
+    <%= text_input f, :username %>
+  <%= error_tag f, :username %>
+    <br>
+  <%= submit "Save" %>
+</.form>
+  <% else %>
+  <ul>
+    <%= for user <- Map.keys(@room.users) do %>
+     <li> <%= user %> </li>
+    <% end %>
+
+  </ul>
+
+  <div>
+    <button phx-click="estimate" value="0.5" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">0.5</button>
+    <button phx-click="estimate" value="1" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">1</button>
+    <button phx-click="estimate" value="2" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">2</button>
+    <button phx-click="estimate" value="3" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">3</button>
+    <button phx-click="estimate" value="5" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">5</button>
+    <button phx-click="estimate" value="8" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">8</button>
+    <button phx-click="estimate" value="13" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">13</button>
+    <button phx-click="estimate" value="20" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">20</button>
+    <button phx-click="estimate" value="?" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">?</button>
+  </div>
+<% end %>
+
