@@ -53,8 +53,13 @@ defmodule EstimationsWeb.RoomLive do
     EstimationsWeb.RoomView.render("room.html", assigns)
   end
 
-  def handle_event("estimate", %{"value" => value}, %{assigns: %{name: name}} = socket) do
-    :ok = GenServer.cast(via_tuple(name), {:estimate, value})
+  def handle_event(
+        "estimate",
+        %{"value" => value},
+        %{assigns: %{name: name, state: %{name: %{"username" => username}}}} = socket
+      ) do
+    :ok = GenServer.cast(via_tuple(name), {:estimate, %{value: value, username: username}})
+    :ok = Phoenix.PubSub.broadcast(Estimations.PubSub, name, :update)
     {:noreply, assign_room(socket)}
   end
 
