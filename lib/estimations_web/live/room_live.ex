@@ -51,35 +51,38 @@ defmodule EstimationsWeb.RoomLive do
 
   def render(assigns) do
     ~H"""
-    <h1 class="text-4xl font-bold">Room: <%= @name %> </h1>
-    <%= if @state.name == nil do %>
+    <section class="container m-auto grid place-items-center">
+      <h1 class="text-4xl font-bold text-white mb-5 mt-10">Room: <%= @name %> </h1>
+      <%= if @state.name == nil do %>
 
-    <.form let={f} for={:username} phx-submit="save">
-    <%= label f, :username %>
-    <%= text_input f, :username %>
-    <%= error_tag f, :username %>
-    <br>
-    <%= submit "Save" %>
-    </.form>
-    <% else %>
-    <ul>
-      <%= for user <- Map.keys(@room.users) do %>
-      <li> <%= user %> :  <%= Map.get(Map.get(@room.users, user), :estimation) %></li>
+      <.form let={f} for={:username} phx-submit="save" class="bg-white shadow-lg hover:shadow-xl rounded px-8 pt-6 pb-8 mb-4 grid gap-3">
+        <h2 class="text-2xl ">Choose a name:</h2>
+        <%= text_input f, :username, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "Username" %>
+        <button type="submit" class="bg-participant-gradient py-2 px-5 rounded-sm font-bold">Save</button>
+      </.form>
+      <% else %>
+      <section class="flex gap-2 p-5">
+        <%= for user <- Map.keys(@room.users) do %>
+        <div class="grid place-items-center px-3 py-2 rounded-sm animate-ping-once bg-participant-gradient shadow-md">
+          <span class="border-b-2"><%= user %></span>
+          <span class="text-2xl font-bold"><%= Map.get(Map.get(@room.users, user), :estimation) %></span>
+        </div>
+        <% end %>
+      </section>
+
+      <div>
+        <button phx-click="estimate" value="0.5" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">0.5</button>
+        <button phx-click="estimate" value="1" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">1</button>
+        <button phx-click="estimate" value="2" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">2</button>
+        <button phx-click="estimate" value="3" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">3</button>
+        <button phx-click="estimate" value="5" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">5</button>
+        <button phx-click="estimate" value="8" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">8</button>
+        <button phx-click="estimate" value="13" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">13</button>
+        <button phx-click="estimate" value="20" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">20</button>
+        <button phx-click="estimate" value="?" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">?</button>
+      </div>
       <% end %>
-    </ul>
-
-    <div>
-      <button phx-click="estimate" value="0.5" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">0.5</button>
-      <button phx-click="estimate" value="1" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">1</button>
-      <button phx-click="estimate" value="2" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">2</button>
-      <button phx-click="estimate" value="3" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">3</button>
-      <button phx-click="estimate" value="5" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">5</button>
-      <button phx-click="estimate" value="8" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">8</button>
-      <button phx-click="estimate" value="13" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">13</button>
-      <button phx-click="estimate" value="20" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">20</button>
-      <button phx-click="estimate" value="?" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">?</button>
-    </div>
-    <% end %>
+    </section>
     """
   end
 
