@@ -51,7 +51,7 @@ defmodule EstimationsWeb.RoomLive do
 
   def render(assigns) do
     ~H"""
-    <section class="container m-auto grid place-items-center">
+    <section class="container m-auto grid place-items-center flex-wrap">
       <h1 class="text-4xl font-bold text-white mb-5 mt-10">Room: <%= @name %> </h1>
       <%= if @state.name == nil do %>
 
@@ -64,7 +64,7 @@ defmodule EstimationsWeb.RoomLive do
       <section class="flex gap-2 p-5">
         <%= for user <- Map.keys(@room.users) do %>
         <div class="grid place-items-center px-3 py-2 rounded-sm animate-ping-once bg-participant-gradient shadow-md">
-          <span class="border-b-2"><%= user %></span>
+          <span class="border-b-2 pb-1 min-w-50px"><%= user %></span>
           <span class="text-2xl font-bold"><%= Map.get(Map.get(@room.users, user), :estimation) %></span>
         </div>
         <% end %>
@@ -80,10 +80,17 @@ defmodule EstimationsWeb.RoomLive do
         <button phx-click="estimate" value="13" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">13</button>
         <button phx-click="estimate" value="20" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">20</button>
         <button phx-click="estimate" value="?" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">?</button>
+        <button phx-click="clear_estimations" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">?</button>
       </div>
       <% end %>
     </section>
     """
+  end
+
+  def handle_event("clear_estimations", %{}, %{assigns: %{name: name}} = socket) do
+    :ok = GenServer.cast(via_tuple(name), :clear_estimations)
+    :ok = Phoenix.PubSub.broadcast(Estimations.PubSub, name, :update)
+    {:noreply, assign_room(socket, name)}
   end
 
   def handle_event(

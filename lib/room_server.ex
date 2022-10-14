@@ -25,7 +25,7 @@ defmodule Estimations.RoomServer do
 
   @impl true
   def handle_cast({:add_user, %{"username" => username}}, state) do
-    updated_state = Map.put(state, :users, Map.put(state.users, username, %{estimation: nil}))
+    updated_state = Map.put(state, :users, Map.put(state.users, username, %{estimation: "-"}))
     {:noreply, updated_state}
   end
 
@@ -33,6 +33,18 @@ defmodule Estimations.RoomServer do
   def handle_cast({:estimate, params}, state) do
     updated_state =
       Map.put(state, :users, Map.put(state.users, params.username, %{estimation: params.value}))
+
+    {:noreply, updated_state}
+  end
+
+  @impl true
+  def handle_cast(:clear_estimations, state) do
+    updated_state =
+      Map.put(
+        state,
+        :users,
+        Map.new(state.users, fn {username, _} -> {username, %{estimation: "-"}} end)
+      )
 
     {:noreply, updated_state}
   end
