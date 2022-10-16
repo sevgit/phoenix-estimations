@@ -14,6 +14,8 @@ defmodule Estimations.Application do
       EstimationsWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Estimations.PubSub},
+      # Start presence
+      EstimationsWeb.Presence,
       # Start the Endpoint (http/https)
       EstimationsWeb.Endpoint,
       {Registry, keys: :unique, name: Estimations.RoomRegistry},
