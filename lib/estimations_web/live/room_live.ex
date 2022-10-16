@@ -1,7 +1,9 @@
 defmodule EstimationsWeb.RoomLive do
   # In Phoenix v1.6+ apps, the line below should be: use MyAppWeb, :live_view
   use EstimationsWeb, :live_view
+  alias EstimationsWeb.Presence
 
+  @impl true
   def handle_params(%{"name" => name} = _params, _uri, socket) do
     :ok = Phoenix.PubSub.subscribe(Estimations.PubSub, name)
     {:noreply, assign_room(socket, name)}
@@ -18,6 +20,8 @@ defmodule EstimationsWeb.RoomLive do
         Estimations.RoomSupervisor,
         {Estimations.RoomServer, name: via_tuple(new_room_name)}
       )
+
+    GenServer.cast(via_tuple(new_room_name), {:subscribe, new_room_name})
 
     {:noreply,
      push_redirect(
@@ -49,6 +53,7 @@ defmodule EstimationsWeb.RoomLive do
     assign(socket, room: room, state: %{name: nil})
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <section class="container m-auto grid place-items-center flex-wrap">
@@ -87,6 +92,7 @@ defmodule EstimationsWeb.RoomLive do
     """
   end
 
+  @impl true
   def handle_event("clear_estimations", %{}, %{assigns: %{name: name}} = socket) do
     :ok = GenServer.cast(via_tuple(name), :clear_estimations)
     :ok = Phoenix.PubSub.broadcast(Estimations.PubSub, name, :update)
@@ -105,11 +111,18 @@ defmodule EstimationsWeb.RoomLive do
 
   def handle_event("save", %{"username" => username}, %{assigns: %{name: name}} = socket) do
     :ok = GenServer.cast(via_tuple(name), {:add_user, username})
-
     :ok = Phoenix.PubSub.broadcast(Estimations.PubSub, name, :update)
+
+    {:ok, _} =
+      Presence.track(self(), "presence:#{name}", username["username"], %{
+        joined_at: :os.system_time(:seconds),
+        room_name: name
+      })
+
     {:noreply, assign_room(socket |> assign(state: %{name: username}))}
   end
 
+  @impl true
   def handle_info(:update, socket) do
     {:noreply, assign_room(socket)}
   end
